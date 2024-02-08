@@ -2,23 +2,22 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
+const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 
-// Middleware
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-const MONGODB_URI = 'mongodb+srv://admin:Elavarasan@elliotcluster.s9b3app.mongodb.net/elliotcluster?retryWrites=true&w=majority';
-
-mongoose.connect(MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error('MongoDB connection error:', err));
 
-// Define mongoose schema and model for form data
 const FormData = mongoose.model('FormData', {
     name: String,
     dob: Date,
@@ -28,16 +27,13 @@ const FormData = mongoose.model('FormData', {
 
 // POST route for form submission
 app.post('/submit-form', async (req, res) => {
-    // Extract form data from request
     const { name, dob, email, phone } = req.body;
 
     try {
-        // Validate phone number (you can use a library like libphonenumber for more advanced validation)
         if (!isValidPhoneNumber(phone)) {
             return res.status(400).json({ error: 'Invalid phone number' });
         }
 
-        // Save form data to MongoDB
         const formData = new FormData({
             name,
             dob,
@@ -46,10 +42,8 @@ app.post('/submit-form', async (req, res) => {
         });
         await formData.save();
 
-        // Send email to the form submitter
         await sendEmail(email, 'Form Submission Confirmation', 'Thank you for submitting the form.');
 
-        // Redirect the user to a page displaying all submitted forms
         res.redirect('/submitted-forms');
     } catch (error) {
         console.error('Form submission error:', error);
@@ -75,20 +69,23 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-// Function to validate phone number
 function isValidPhoneNumber(phone) {
-    // Implement your validation logic here
-    return true; // For demonstration, always return true
+    const phoneRegex = /^\d{10}$/;
+    return phoneRegex.test(phone);
 }
 
 // Function to send email
 async function sendEmail(to, subject, message) {
-    // Configure nodemailer transporter
     const transporter = nodemailer.createTransport({
-        // Configure transporter options (e.g., SMTP or other transport)
+        host: 'smtp.example.com', // Update with your SMTP server details
+        port: 587,
+        secure: false,
+        auth: {
+            user: 'your-email@example.com', // Update with your email credentials
+            pass: 'your-email-password' // Update with your email password or app password
+        }
     });
 
-    // Send email
     await transporter.sendMail({
         from: 'your-email@example.com',
         to,

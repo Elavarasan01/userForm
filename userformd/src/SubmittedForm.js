@@ -7,7 +7,7 @@ function SubmittedForms() {
   useEffect(() => {
     const fetchSubmittedForms = async () => {
       try {
-        const response = await axios.get('/submitted-forms');
+        const response = await axios.get('http://localhost:2000/submitted-forms');
         setSubmittedForms(response.data);
       } catch (error) {
         console.error('Error fetching submitted forms:', error);
