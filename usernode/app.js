@@ -77,12 +77,12 @@ function isValidPhoneNumber(phone) {
 // Function to send email
 async function sendEmail(to, subject, message) {
     const transporter = nodemailer.createTransport({
-        host: 'smtp.example.com', // Update with your SMTP server details
+        host: 'smtp.example.com',
         port: 587,
         secure: false,
         auth: {
-            user: 'your-email@example.com', // Update with your email credentials
-            pass: 'your-email-password' // Update with your email password or app password
+            user: 'your-email@example.com', 
+            pass: 'your-email-password' 
         }
     });
 

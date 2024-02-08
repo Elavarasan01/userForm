@@ -17,10 +17,7 @@ export const UserForm = () => {
     e.preventDefault();
   
     try {
-      // Create a shallow copy of formData
       const formDataCopy = { ...formData };
-  
-      // Submit the formData
       await axios.post('http://localhost:2000/submit-form', formDataCopy);
       alert('Form submitted successfully');
     } catch (error) {
@@ -32,7 +29,7 @@ export const UserForm = () => {
   
 
   return (
-    <div className="form-container"> {/* Apply CSS class to form container */}
+    <div className="form-container"> 
       <h1>User Form</h1>
       <form onSubmit={handleSubmit}>
         <label className="form-label">
